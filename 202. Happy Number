@@ -1,3 +1,4 @@
+'''
 Write an algorithm to determine if a number n is happy.
 
 A happy number is a number defined by the following process:
@@ -31,3 +32,52 @@ Constraints:
 
 
 Solution:
+'''
+
+import unittest
+
+class Solution:
+    def isHappy(self, n: int) -> bool:
+        seen = set()
+        current = str(n)
+
+        while current not in seen:
+            seen.add(current)
+            Sum = 0
+            for digit in current:
+                digit = int(digit)
+                Sum += digit * digit
+
+            if Sum == 1: return True
+            current = str(Sum)
+
+        return False
+
+
+# Testing:
+
+class TestIsHappy(unittest.TestCase):
+    def setUp(self):
+        self.sol = Solution()
+
+    def test_happy_numbers(self):
+        self.assertTrue(self.sol.isHappy(1))      # 1 is happy
+        self.assertTrue(self.sol.isHappy(19))     # 19 is happy
+        self.assertTrue(self.sol.isHappy(7))      # 7 is happy
+        self.assertTrue(self.sol.isHappy(10))     # 10 is happy
+
+    def test_unhappy_numbers(self):
+        self.assertFalse(self.sol.isHappy(2))     # 2 is not happy
+        self.assertFalse(self.sol.isHappy(4))     # 4 is not happy
+        self.assertFalse(self.sol.isHappy(20))    # 20 is not happy
+        self.assertFalse(self.sol.isHappy(3))     # 3 is not happy
+
+    def test_large_happy_number(self):
+        self.assertTrue(self.sol.isHappy(100000)) # 100000 is happy
+
+    def test_large_unhappy_number(self):
+        self.assertFalse(self.sol.isHappy(9999999)) # 9999999 is not happy
+
+if __name__ == "__main__":
+    unittest.main()
+        
