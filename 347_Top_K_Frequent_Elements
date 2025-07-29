@@ -1,0 +1,80 @@
+'''
+Given an integer array nums and an integer k, return the k most frequent elements. You may return the answer in any order.
+
+ 
+
+Example 1:
+
+Input: nums = [1,1,1,2,2,3], k = 2
+Output: [1,2]
+Example 2:
+
+Input: nums = [1], k = 1
+Output: [1]
+ 
+
+Constraints:
+
+1 <= nums.length <= 105
+-104 <= nums[i] <= 104
+k is in the range [1, the number of unique elements in the array].
+It is guaranteed that the answer is unique.
+ 
+
+Follow up: Your algorithm's time complexity must be better than O(n log n), where n is the array's size.
+'''
+
+import unittest
+from typing import List
+from collections import Counter
+
+class Solution:
+    def topKFrequent(self, nums: List[int], k: int) -> List[int]:
+        if not nums or k <= 0:
+            return []
+        if k > len(nums):
+            raise IndexError("k is larger than the number of unique elements in nums")
+        count = Counter(nums)                                # O(n)
+        freq = [[] for _ in range(len(nums) + 1)]            # O(n)
+        for num, cnt in count.items():                       # O(n)
+            freq[cnt].append(num)
+
+        res = []
+        for i in range(len(freq) - 1, 0, -1):                # O(n)
+            for num in freq[i]:
+                res.append(num)
+                if len(res) == k:
+                    return res
+    
+
+
+# Testing:
+class TestTopKFrequent(unittest.TestCase):
+    def setUp(self):
+        self.solution = Solution() 
+    
+    def test_example_1(self):
+        self.assertEqual(set(self.solution.topKFrequent([1,1,1,2,2,3], 2)), {1, 2})
+    
+    def test_example_2(self):
+        self.assertEqual(set(self.solution.topKFrequent([1], 1)), {1})
+
+    def test_multiple_frequencies(self):
+        self.assertEqual(set(self.solution.topKFrequent([1,2,3,4,5,6,7,8,9,10], 3)), {1, 2, 3})
+
+    def test_all_elements_same(self):
+        self.assertEqual(set(self.solution.topKFrequent([2,2,2,2], 1)), {2})
+
+    def test_k_greater_than_unique_elements(self):
+        with self.assertRaises(IndexError):
+            self.solution.topKFrequent([1,2,3], 5)
+
+    def test_large_input(self):
+        nums = [1] * 1000 + [2] * 500 + [3] * 300 + [4] * 200
+        self.assertEqual(set(self.solution.topKFrequent(nums, 2)), {1, 2})
+
+    def test_empty_input(self):
+        self.assertEqual(self.solution.topKFrequent([], 1), [])
+
+if __name__ == "__main__":
+    unittest.main(exit=False)
