@@ -1,0 +1,75 @@
+'''
+Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.
+
+You may assume that each input would have exactly one solution, and you may not use the same element twice.
+
+You can return the answer in any order.
+
+ 
+
+Example 1:
+
+Input: nums = [2,7,11,15], target = 9
+Output: [0,1]
+Explanation: Because nums[0] + nums[1] == 9, we return [0, 1].
+Example 2:
+
+Input: nums = [3,2,4], target = 6
+Output: [1,2]
+Example 3:
+
+Input: nums = [3,3], target = 6
+Output: [0,1]
+ 
+
+Constraints:
+
+2 <= nums.length <= 10^4
+-10^9 <= nums[i] <= 10^9
+-10^9 <= target <= 10^9
+Only one valid answer exists.
+ 
+
+Follow-up: Can you come up with an algorithm that is less than O(n^2) time complexity?
+'''
+
+import unittest
+from typing import List
+
+class Solution:
+    def twoSum(self, nums: List[int], target: int) -> List[int]:
+        # Create a hashmap to store the indices of the numbers
+        # This allows us to check for the complement in O(1) time
+        hashmap = {}
+        for index, num in enumerate(nums):
+            hashmap[num] = index
+        # Iterate through the list and check if the complement exists in the hashmap    
+        for index, num in enumerate(nums):
+            complement = target - num
+            if complement in hashmap and hashmap[complement] != index:
+                return [index, hashmap[complement]] # Return the indices of the two numbers that add up to target
+        # If no solution is found, return an empty list
+        return []
+
+
+# Testing:
+
+class TestSolution(unittest.TestCase):
+    def setUp(self):
+        self.solution = Solution()
+
+    def test_two_sum(self):
+        self.assertEqual(self.solution.twoSum([2, 7, 11, 15], 9), [0, 1]) 
+        self.assertEqual(self.solution.twoSum([3, 2, 4], 6), [1, 2]) 
+        self.assertEqual(self.solution.twoSum([3, 3], 6), [0, 1]) 
+        self.assertEqual(self.solution.twoSum([1, 2, 3, 4], 5), [0, 3]) 
+        self.assertEqual(self.solution.twoSum([-1, -2, -3, -4], -6), [1, 3]) 
+        self.assertEqual(self.solution.twoSum([0, 4, 3, 0], 0), [0, 3])
+        self.assertEqual(self.solution.twoSum([1, 5, 3, 4], 8), [1, 2]) 
+        self.assertEqual(self.solution.twoSum([1, 2, 3], 7), []) # No two numbers add up to 7
+        self.assertEqual(self.solution.twoSum([], 0), []) # Edge case with empty list
+        self.assertEqual(self.solution.twoSum([1], 1), [])  # Edge case with single element
+
+if __name__ == '__main__':
+    unittest.main(exit=False)  # Use exit=False to prevent unittest from calling sys.exit()
+        
