@@ -1,0 +1,124 @@
+'''
+Given a string s, return whether s is a valid number.
+
+For example, all the following are valid numbers: "2", "0089", "-0.1", "+3.14", "4.", "-.9", "2e10", "-90E3", "3e+7", "+6e-1", "53.5e93", "-123.456e789", while the following are not valid numbers: "abc", "1a", "1e", "e3", "99e2.5", "--6", "-+3", "95a54e53".
+
+Formally, a valid number is defined using one of the following definitions:
+
+An integer number followed by an optional exponent.
+A decimal number followed by an optional exponent.
+An integer number is defined with an optional sign '-' or '+' followed by digits.
+
+A decimal number is defined with an optional sign '-' or '+' followed by one of the following definitions:
+
+Digits followed by a dot '.'.
+Digits followed by a dot '.' followed by digits.
+A dot '.' followed by digits.
+An exponent is defined with an exponent notation 'e' or 'E' followed by an integer number.
+
+The digits are defined as one or more digits.
+
+ 
+
+Example 1:
+
+Input: s = "0"
+
+Output: true
+
+Example 2:
+
+Input: s = "e"
+
+Output: false
+
+Example 3:
+
+Input: s = "."
+
+Output: false
+
+ 
+
+Constraints:
+
+1 <= s.length <= 20
+s consists of only English letters (both uppercase and lowercase), digits (0-9), plus '+', minus '-', or dot '.'.
+'''
+
+import unittest
+
+class Solution:
+    def isNumber(self, s: str) -> bool:
+        s = s.strip()
+        if not s:
+            return False
+        
+        # Check for excess signs or dots
+        if s.count('.') > 1 or s.count('e') > 1 or s.count('E') > 1 or s.count('+') > 1 or s.count('-') > 1:
+            return False
+        
+        #Check for multiple signs at the start
+        if len(s) >= 2 and (s[0] in ('+', '-') and s[1] in ('+', '-', '.')):
+            return False
+
+        # Check for valid integer or decimal number
+        if s[0] in ('+', '-'):
+            s = s[1:]
+
+        if 'e' in s or 'E' in s:
+            base, exp = s.split('e') if 'e' in s else s.split('E')
+            return self.isValidNumber(base) and self.isValidInteger(exp)
+        else:
+            return self.isValidNumber(s)
+
+    def isValidNumber(self, s: str) -> bool:
+        if '.' in s:
+            parts = s.split('.')
+            if len(parts) != 2:
+                return False
+            left, right = parts
+            # At least one side must be non-empty and all non-empty sides must be digits
+            if (left == "" and right == ""):
+                return False
+            if (left and not left.isdigit()) or (right and not right.isdigit()):
+                return False
+            return True
+        return s.isdigit() or (s and (s[0] in ('+', '-') and s[1:].isdigit()))
+
+    def isValidInteger(self, s: str) -> bool:
+        return s.isdigit() or (s and (s[0] in ('+', '-') and s[1:].isdigit()))
+    
+# Testing:
+
+class TestSolution(unittest.TestCase):
+    def setUp(self):
+        self.solution = Solution()
+
+    def test_is_number(self):
+        self.assertTrue(self.solution.isNumber("0"))
+        self.assertFalse(self.solution.isNumber("e"))
+        self.assertFalse(self.solution.isNumber("."))
+        self.assertTrue(self.solution.isNumber("2"))
+        self.assertTrue(self.solution.isNumber("-0.1"))
+        self.assertTrue(self.solution.isNumber("+3.14"))
+        self.assertTrue(self.solution.isNumber("4."))
+        self.assertTrue(self.solution.isNumber("-9.9e10"))
+        self.assertFalse(self.solution.isNumber("abc"))
+        self.assertFalse(self.solution.isNumber("1a"))
+        self.assertFalse(self.solution.isNumber("1e"))
+        self.assertFalse(self.solution.isNumber("e3"))
+        self.assertFalse(self.solution.isNumber("99e2.5"))
+        self.assertFalse(self.solution.isNumber("--6"))
+        self.assertFalse(self.solution.isNumber("-+3"))
+        self.assertFalse(self.solution.isNumber("95a54e53"))
+        self.assertTrue(self.solution.isNumber("53.5e93"))
+        self.assertTrue(self.solution.isNumber("-123.456e789"))
+        self.assertTrue(self.solution.isNumber("3e+7"))
+        self.assertTrue(self.solution.isNumber("+6e-1"))
+        self.assertFalse(self.solution.isNumber("   leading spaces"))
+        self.assertFalse(self.solution.isNumber("trailing spaces   "))
+        self.assertFalse(self.solution.isNumber("multiple   spaces   between"))
+
+if __name__ == '__main__':
+    unittest.main(exit=False)  # Use exit=False to prevent unittest from calling sys.exit()
